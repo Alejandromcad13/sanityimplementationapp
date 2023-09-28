@@ -1,6 +1,4 @@
-import { client } from "@/sanity/lib/client";
-import { profile } from "console";
-import Image from "next/image";
+export const revalidate = 30;
 
 type Profile = {
   name: string;
@@ -8,22 +6,24 @@ type Profile = {
   _id: string;
 };
 
+const getProfileInfo = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getProfile`);
+
+  const { profileInfo } = await res.json();
+
+  return profileInfo;
+};
+
 export default async function Home() {
-  const profileInfo = await client.fetch<Profile[]>(`*[_type == "profile"]{
-    name,
-    occupation,
-    _id
-  }`, {next: {revalidate: 20}});
-  
+  const profile: Profile[] = await getProfileInfo();
+
   return (
-      <div>
-        {profileInfo.map((info) => (
-          <>
-            This is my name {info.name} - <br />
-            This is my occupation {info.occupation}
-          </>
-        ))}
-      </div>
-    
+    <div>
+      {profile.map((item) => (
+        <>
+          {item.name} <br></br>
+        </>
+      ))}
+    </div>
   );
 }

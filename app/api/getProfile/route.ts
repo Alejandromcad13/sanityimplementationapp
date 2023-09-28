@@ -1,19 +1,19 @@
-import { client } from '@/sanity/lib/client'
-import { NextResponse } from 'next/server'
-
+import { client } from "@/sanity/lib/client";
+import { NextResponse } from "next/server";
 type Profile = {
-    name: string;
-    occupation: string;
-    _id: string;
-  };
- 
+  name: string;
+  occupation: string;
+  _id: string;
+};
+
 export async function GET() {
-  const res = await client.fetch<Profile[]>(`*[_type == "profile"]{
-    name,
-    occupation,
-    _id
-  }`)
- 
- 
-  return NextResponse.json({ res })
+  const profileInfo: Profile[] = await client.fetch(`*[_type == "profile"]{
+        name,
+        occupation,
+        _id
+      }`);
+
+      
+
+  return NextResponse.json({ profileInfo });
 }
