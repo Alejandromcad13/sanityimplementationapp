@@ -1,4 +1,6 @@
-export const revalidate = 30;
+import { client } from "@/sanity/lib/client";
+
+export const revalidate = 10;
 
 type Profile = {
   name: string;
@@ -7,19 +9,21 @@ type Profile = {
 };
 
 const getProfileInfo = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getProfile`);
-
-  const { profileInfo } = await res.json();
-
+  const profileInfo: Profile[] = await client.fetch(`*[_type == "profile"]{
+    name,
+    occupation,
+    _id
+  }`);
+  console.log(profileInfo)
   return profileInfo;
 };
 
 export default async function Home() {
-  const profile: Profile[] = await getProfileInfo();
+  const profileInfo = await getProfileInfo();
 
   return (
     <div>
-      {profile.map((item) => (
+      {profileInfo.map((item) => (
         <>
           {item.name} <br></br>
         </>
